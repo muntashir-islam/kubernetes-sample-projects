@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: monitoring2
+  name: objstore
+stringData:
+  objstore.yml: |-
+    type: S3
+    config:
+      bucket: prometheus-metrics-2
+      endpoint: "minio.minio:9000"
+      insecure: true
+      access_key: "dVBijRsJipPIvYd8"
+      secret_key: "H8IHab3ufHGn05ROT0nxywh2H25Th1S3"
