@@ -25,4 +25,4 @@ spec:
                 }[2m])
               ) by (le)
             )
-          ) * 10000 or on() vector(0)
+          ) or on() vector(0)
