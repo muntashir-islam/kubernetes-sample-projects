@@ -8,8 +8,8 @@ spec:
     interval: 30s
     count: 5
 
-    successCondition: result != nil && result < 500
-    failureCondition: result == nil || result >= 500
+    successCondition: len(result) > 0 && result[0] < 500
+    failureCondition: len(result) == 0 || result[0] >= 500
 
     provider:
       prometheus:
@@ -23,3 +23,4 @@ spec:
               )) by (le)
             )
           )
+
