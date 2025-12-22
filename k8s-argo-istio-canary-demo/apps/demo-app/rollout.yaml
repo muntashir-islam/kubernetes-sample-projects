@@ -9,6 +9,8 @@ spec:
       app: demo-app
   strategy:
     canary:
+      stableService: demo-app-stable
+      canaryService: demo-app-canary
       trafficRouting:
         istio:
           virtualService:

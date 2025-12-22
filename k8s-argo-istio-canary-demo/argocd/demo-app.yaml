@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/muntashir-islam/k8s-argo-istio-canary-demo
+    repoURL: https://github.com/muntashir-islam/kubernetes-sample-projects
     targetRevision: main
-    path: apps/demo-app
+    path: k8s-argo-istio-canary-demo/apps/demo-app
   destination:
     server: https://kubernetes.default.svc
     namespace: default
