@@ -21,7 +21,7 @@ spec:
                   istio_request_duration_milliseconds_bucket{
                     reporter="destination",
                     destination_service_name="demo-app-canary"
-                  }[100m]
+                  }[10m]
                 ) by (le)
               )
             )
