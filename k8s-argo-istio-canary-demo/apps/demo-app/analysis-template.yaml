@@ -16,11 +16,13 @@ spec:
         address: http://prometheus.istio-system:9090
         # FIXED: "by (le)" is now inside the sum(...)
         query: >-
-          histogram_quantile(0.95, 
-            sum(
-              rate(istio_request_duration_milliseconds_bucket{
-                reporter="destination",
-                destination_service_name="demo-app-canary"
-              }[2m])
-            ) by (le)
-          ) or on() vector(0)
+          (
+            histogram_quantile(0.95, 
+              sum(
+                rate(istio_request_duration_milliseconds_bucket{
+                  reporter="destination",
+                  destination_service_name="demo-app-canary"
+                }[2m])
+              ) by (le)
+            )
+          ) * 10000 or on() vector(0)
