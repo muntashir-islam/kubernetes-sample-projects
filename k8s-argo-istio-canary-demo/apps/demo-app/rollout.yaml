@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: demo-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: demo-app
+  strategy:
+    canary:
+      trafficRouting:
+        istio:
+          virtualService:
+            name: demo-app
+      steps:
+      - setWeight: 20
+      - pause: { duration: 2m }
+      - analysis:
+          templates:
+          - templateName: p95-latency
+  template:
+    metadata:
+      labels:
+        app: demo-app
+    spec:
+      containers:
+      - name: app
+        image: docker.io/hashicorp/http-echo:0.2.3
+        args:
+        - "-text=version-v1"
+        ports:
+        - containerPort: 5678

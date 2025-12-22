@@ -1,0 +1,10 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: demo-app
+spec:
+  host: demo-app
+  subsets:
+  - name: stable
+    labels:
+      app: demo-app
