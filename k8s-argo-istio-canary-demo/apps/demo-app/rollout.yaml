@@ -54,6 +54,8 @@ spec:
           value: "demo-app"
         - name: DELAY
           value: "2000ms"
+        - name: TEST
+          value: "demo-app"
 
         ports:
         - containerPort: 8080
