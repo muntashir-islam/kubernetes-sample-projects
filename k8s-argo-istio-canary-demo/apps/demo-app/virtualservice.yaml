@@ -8,6 +8,8 @@ spec:
   http:
   - route:
     - destination:
-        host: demo-app
-        subset: stable
+        host: demo-app-stable
       weight: 100
+    - destination:
+        host: demo-app-canary
+      weight: 0
