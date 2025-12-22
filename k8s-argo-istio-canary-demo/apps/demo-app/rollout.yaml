@@ -4,24 +4,39 @@ metadata:
   name: demo-app
 spec:
   replicas: 2
-  progressDeadlineSeconds: 60
+
+  # Fail fast if pods don't become healthy
+  progressDeadlineSeconds: 90
+
   selector:
     matchLabels:
       app: demo-app
+
   strategy:
     canary:
+      # REQUIRED for Istio traffic routing
       stableService: demo-app-stable
       canaryService: demo-app-canary
+
       trafficRouting:
         istio:
           virtualService:
             name: demo-app
+
       steps:
+      # 20% traffic to canary
       - setWeight: 20
-      - pause: { duration: 2m }
+      - pause:
+          duration: 1m
+
+      # Run Prometheus analysis
       - analysis:
           templates:
           - templateName: p95-latency
+
+      # Promote to 100% if analysis passes
+      - setWeight: 100
+
   template:
     metadata:
       labels:
@@ -29,9 +44,28 @@ spec:
     spec:
       containers:
       - name: app
-        image: docker.io/hashicorp/http-echo:0.2.3
-        args:
-        - "-text=version-v2"
-        - "-delay=2s"
+        image: nicholasjackson/fake-service:v0.26.2
+        imagePullPolicy: IfNotPresent
+
+        env:
+        - name: LISTEN_ADDR
+          value: "0.0.0.0:8080"
+        - name: NAME
+          value: "demo-app"
+
         ports:
-        - containerPort: 5678
+        - containerPort: 8080
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
