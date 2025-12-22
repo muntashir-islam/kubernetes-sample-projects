@@ -5,20 +5,24 @@ metadata:
 spec:
   metrics:
   - name: p95
-    interval: 30s
-    count: 5
-    initialDelay: 45s      # Give fortio traffic time to register
-    failureLimit: 0        # Rollback immediately on the first failure
-    inconclusiveLimit: 2   # Allow 2 "no data" intervals before erroring
-    successCondition: len(result) > 0 && result[0] < 500
-    failureCondition: len(result) > 0 && result[0] >= 500
+    interval: 30s        # check every 30 seconds
+    count: 5            # number of evaluations per step
+    successCondition: len(result) > 0 && result[0] < 0.5
+    failureCondition: len(result) == 0 || result[0] >= 0.5
     provider:
       prometheus:
         address: http://prometheus.istio-system:9090
-        query: >-
-          histogram_quantile(0.95, 
-            sum(irate(istio_request_duration_milliseconds_bucket{
-              reporter="destination",
-              destination_service_name="demo-app-canary"
-            }[1m])) by (le)
+        query: |
+          max(
+            histogram_quantile(
+              0.95,
+              sum(
+                rate(
+                  istio_request_duration_milliseconds_bucket{
+                    reporter="destination",
+                    destination_service_name="demo-app-canary"
+                  }[100m]
+                ) by (le)
+              )
+            )
           )
