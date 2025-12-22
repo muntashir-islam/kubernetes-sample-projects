@@ -31,5 +31,6 @@ spec:
         image: docker.io/hashicorp/http-echo:0.2.3
         args:
         - "-text=version-v1"
+        - "-delay=3s"
         ports:
         - containerPort: 5678
