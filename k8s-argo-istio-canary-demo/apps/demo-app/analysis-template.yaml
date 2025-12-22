@@ -7,8 +7,8 @@ spec:
   - name: p95
     interval: 30s
     count: 5
-    successCondition: result < 500
-    failureCondition: result >= 500
+    successCondition: result != nil && result < 500
+    failureCondition: result == nil || result >= 500
     provider:
       prometheus:
         address: http://prometheus.istio-system:9090

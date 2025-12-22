@@ -4,6 +4,7 @@ metadata:
   name: demo-app
 spec:
   replicas: 2
+  progressDeadlineSeconds: 60
   selector:
     matchLabels:
       app: demo-app
@@ -31,6 +32,6 @@ spec:
         image: docker.io/hashicorp/http-echo:0.2.3
         args:
         - "-text=version-v1"
-        - "-delay=3s"
+        #- "-delay=2s"
         ports:
         - containerPort: 5678
