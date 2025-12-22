@@ -6,7 +6,9 @@ spec:
   metrics:
   - name: p95
     interval: 30s
+    count: 5
     successCondition: result < 500
+    failureCondition: result >= 500
     provider:
       prometheus:
         address: http://prometheus.istio-system:9090
