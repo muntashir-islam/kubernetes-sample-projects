@@ -53,7 +53,7 @@ spec:
         - name: NAME
           value: "demo-app"
         - name: DELAY
-          value: "200ms"
+          value: "2000ms"
 
 
         ports:

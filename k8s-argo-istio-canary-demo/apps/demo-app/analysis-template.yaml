@@ -7,19 +7,20 @@ spec:
   - name: p95
     interval: 30s
     count: 5
-
-    successCondition: len(result) > 0 && result[0] < 500
-    failureCondition: len(result) == 0 || result[0] >= 500
-
+    # Allow for some data warmth
+    initialDelay: 30s 
+    # This ensures a "Bad Data" error doesn't immediately kill the rollout
+    consecutiveErrorLimit: 3 
+    # Adjusting threshold: 0.5s = 500ms
+    successCondition: len(result) > 0 && result[0] < 0.5
+    failureCondition: len(result) > 0 && result[0] >= 0.5
     provider:
       prometheus:
         address: http://prometheus.istio-system:9090
-        query: |
-          query: |
+        query: >-
           histogram_quantile(0.95, 
-            sum(rate(istio_request_duration_milliseconds_bucket{
+            sum(irate(istio_request_duration_seconds_bucket{
               reporter="destination",
               destination_workload="demo-app"
             }[1m])) by (le)
           )
-
