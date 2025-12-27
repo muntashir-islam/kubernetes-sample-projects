@@ -1,0 +1,1 @@
+kubectl annotate gateway bookinfo-gateway networking.istio.io/service-type=ClusterIP --namespace=default
