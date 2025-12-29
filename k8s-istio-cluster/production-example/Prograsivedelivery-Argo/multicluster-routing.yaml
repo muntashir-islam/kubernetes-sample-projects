@@ -1,0 +1,30 @@
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: payment-remote
+  namespace: prod
+spec:
+  hosts:
+  - payment.global
+  location: MESH_INTERNAL
+  resolution: DNS
+  endpoints:
+  - address: payment.prod.svc.cluster.local
+    locality: region1/zone1
+  - address: payment.prod.remote.svc.cluster.local
+    locality: region2/zone1
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: payment-dr
+  namespace: prod
+spec:
+  host: payment.global
+  trafficPolicy:
+    loadBalancer:
+      localityLbSetting:
+        enabled: true
+        failover:
+        - from: region1
+          to: region2

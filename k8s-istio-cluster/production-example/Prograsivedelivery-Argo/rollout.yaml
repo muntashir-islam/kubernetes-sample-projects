@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: payment
+  namespace: prod
+spec:
+  replicas: 4
+  strategy:
+    canary:
+      canaryService: payment-canary
+      stableService: payment-stable
+      trafficRouting:
+        istio:
+          virtualService:
+            name: payment-vs
+            routes:
+            - primary
+      steps:
+      - setWeight: 10
+      - pause: { duration: 60s }
+      - setWeight: 30
+      - pause: { duration: 120s }
+      - setWeight: 60
+      - pause: { duration: 180s }
+      - setWeight: 100
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+      - name: app
+        image: hashicorp/http-echo
+        args:
+        - "-text=Payment Canary"

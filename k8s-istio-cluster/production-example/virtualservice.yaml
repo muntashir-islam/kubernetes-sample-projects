@@ -1,0 +1,33 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: payment-route
+  namespace: prod
+spec:
+  parentRefs:
+  - name: prod-gateway
+
+  rules:
+  # Internal traffic → v2
+  - matches:
+    - headers:
+        - name: x-internal-user
+          value: "true"
+    backendRefs:
+    - name: payment
+      port: 80
+      weight: 100
+      filters:
+      - type: RequestHeaderModifier
+        requestHeaderModifier:
+          add:
+            x-version: v2
+
+  # External traffic → Canary
+  - backendRefs:
+    - name: payment
+      port: 80
+      weight: 85
+    - name: payment
+      port: 80
+      weight: 15

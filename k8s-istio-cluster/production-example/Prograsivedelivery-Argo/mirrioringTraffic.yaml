@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: payment-vs
+  namespace: prod
+spec:
+  hosts:
+  - payment-stable
+  http:
+  - route:
+    - destination:
+        host: payment-stable
+      weight: 100
+    mirror:
+      host: payment-canary
+    mirrorPercentage:
+      value: 20
